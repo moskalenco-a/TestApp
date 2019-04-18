@@ -60,8 +60,8 @@ namespace PlayTest
 
         public OneAnswerQuestion()
         {
-            Answers = new List<string>() { "", "" };
-            CorrectAnswerIndex = 0;
+            //Answers = new List<string>() { "" };//, "" };
+            //CorrectAnswerIndex = 0;
         }
     }
 
@@ -72,10 +72,10 @@ namespace PlayTest
 
         public MultipleAnswerQuestion()
         {
-            Answers = new List<Answer>() {
-                new Answer { Text = "", IsTrue = false },
-                new Answer { Text = "", IsTrue = false }
-            };
+            //Answers = new List<Answer>() {
+            //    new Answer { Text = "", IsTrue = false },
+            //    //new Answer { Text = "", IsTrue = false }
+            //};
         }
     }
 }
