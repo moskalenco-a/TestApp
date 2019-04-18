@@ -25,9 +25,10 @@ namespace PlayTest
 
         private List<Question> GetQuestionsFromFile(string path)
         {
+            var s = File.ReadAllText(path);
             List<Question> questionsList = null;
             var serializer = new XmlSerializer(typeof(List<Question>));
-            using (var stream = new StreamReader(path))
+            using (var stream = File.Open(path, FileMode.Open, FileAccess.Read))
             {
                 questionsList = (List<Question>)serializer.Deserialize(stream);
             }
@@ -48,7 +49,7 @@ namespace PlayTest
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            questions = GetQuestionsFromFile("data.xml");
+            questions = GetQuestionsFromFile("test.xml");
             for (int i = 0; i < questions.Count; i++)
             {
                 var testControl = TestControlFactory.CreateControl(questions[i]);
@@ -79,23 +80,8 @@ namespace PlayTest
                 int correctAnswers = 0;
                 foreach (TestUserControl control in testControls)
                 {
-                    if (control is ucOneAnswerTest)
-                    {
-                        if ((control as ucOneAnswerTest).IsAnswerCorrect)
-                            correctAnswers++;
-                    }
-
-                    if (control is ucMultipleAnswerTest)
-                    {
-                        if ((control as ucMultipleAnswerTest).IsAnswerCorrect)
-                            correctAnswers++;
-                    }
-
-                    if (control is ucCustomAnswerTest)
-                    {
-                        if ((control as ucCustomAnswerTest).IsAnswerCorrect)
-                            correctAnswers++;
-                    }
+                    if (control.IsAnswerCorrect())
+                        correctAnswers++;
                 }
                 string info = string.Format("Тест завершен\nПравильных ответов: {0} / {1}", correctAnswers, questions.Count);
                 MessageBox.Show(info, "Тест завершен", MessageBoxButtons.OK, MessageBoxIcon.Information);

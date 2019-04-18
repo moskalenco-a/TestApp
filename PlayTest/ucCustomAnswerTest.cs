@@ -12,24 +12,21 @@ namespace PlayTest
 {
     public partial class ucCustomAnswerTest : TestUserControl
     {
-        private Question question;
+        private CustomAnswerQuestion question;
 
-        public ucCustomAnswerTest(Question question)
+        public ucCustomAnswerTest(CustomAnswerQuestion question)
         {
             InitializeComponent();
 
             this.question = question;
-            lbQuestion.Text = question.QuestionText;
+            lbQuestion.Text = question.Text;
             lbQuestion.Left = (this.Width - lbQuestion.Width) / 2;
             tbAnswer.Left = (this.Width - tbAnswer.Width) / 2;
         }
 
-        public override bool IsAnswerCorrect
+        public override bool IsAnswerCorrect()
         {
-            get
-            {
-                return tbAnswer.Text.ToLower() == question.CorrectAnswer.ToLower();
-            }
+            return tbAnswer.Text.ToLower() == question.CorrectAnswer.ToLower();
         }
     }
 }

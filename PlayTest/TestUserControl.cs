@@ -7,8 +7,11 @@ using System.Windows.Forms;
 
 namespace PlayTest
 {
-    public abstract class TestUserControl: UserControl
+    public class TestUserControl: UserControl
     {
-        public abstract bool IsAnswerCorrect { get; }
+        public virtual bool IsAnswerCorrect()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

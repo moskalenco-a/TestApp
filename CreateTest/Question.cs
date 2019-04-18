@@ -4,42 +4,78 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace CreateTest
 {
     [Serializable]
-    public enum QuestionType
-    {
-        OneAnswer,      // radiobutton
-        MultipleAnswer, // checkbox
-        CustomAnswer    // textbox
-    }
-
-    [Serializable]
     public class Answer
     {
-        [DisplayName("Ответ")]
         public string Text { get; set; }
-        
-        [DisplayName("Правильный ответ?")]
         public bool IsTrue { get; set; }
+        public Answer()
+        {
+            Text = "";
+            IsTrue = false;
+        }
     }
 
     [Serializable]
+    [XmlInclude(typeof(OneAnswerQuestion))]
+    [XmlInclude(typeof(MultipleAnswerQuestion))]
+    [XmlInclude(typeof(CustomAnswerQuestion))]
     public class Question
     {
-        public QuestionType Type;
-        public string QuestionText { get; set; }
-        public List<Answer> Answers { get; set; }
-        public List<bool> AnswerCorrect { get; set; }
-        public string CorrectAnswer { get; set; }
+        public string Text { get; set; }
+    }
 
-        public Question()
+    [Serializable]
+    public class CustomAnswerQuestion : Question
+    {
+        public string CorrectAnswer { get; set; }
+        public CustomAnswerQuestion()
         {
-            Type = QuestionType.CustomAnswer;
-            QuestionText = "Текст вопроса";
-            Answers = new List<Answer>();
-            CorrectAnswer = "Правильный ответ";
+            Text = "";
+            CorrectAnswer = "";
+        }
+    }
+
+    [Serializable]
+    public class OneAnswerQuestion : Question
+    {
+        private int correctAnswerIndex;
+        public List<string> Answers { get; set; }
+        public int CorrectAnswerIndex
+        {
+            get
+            {
+                return correctAnswerIndex;
+            }
+            set
+            {
+                if (0 <= value && value < Answers.Count)
+                    correctAnswerIndex = value;
+            }
+        }
+
+        public OneAnswerQuestion()
+        {
+            Answers = new List<string>() { "", "" };
+            CorrectAnswerIndex = 0;
+        }
+    }
+
+    [Serializable]
+    public class MultipleAnswerQuestion : Question
+    {
+        public List<Answer> Answers { get; set; }
+
+        public MultipleAnswerQuestion()
+        {
+            Answers = new List<Answer>() {
+                new Answer { Text = "", IsTrue = false },
+                new Answer { Text = "", IsTrue = false }
+            };
         }
     }
 }

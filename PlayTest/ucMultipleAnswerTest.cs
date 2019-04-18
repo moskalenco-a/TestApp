@@ -12,19 +12,18 @@ namespace PlayTest
 {
     public partial class ucMultipleAnswerTest : TestUserControl
     {
-        private Question question;
+        private MultipleAnswerQuestion question;
 
-        public ucMultipleAnswerTest(Question question)
+        public ucMultipleAnswerTest(MultipleAnswerQuestion question)
         {
             InitializeComponent();
 
             this.question = question;
-            lbQuestion.Text = question.QuestionText;
+            lbQuestion.Text = question.Text;
             lbQuestion.Left = (this.Width - lbQuestion.Width) / 2;
             int answersCount = question.Answers.Count;
             int margin = 20;
-            int cbFirstTop = lbQuestion.Top + lbQuestion.Height + margin;
-            int lastTop = lbQuestion.Top + lbQuestion.Height + margin;
+            int currentTop = lbQuestion.Top + lbQuestion.Height + margin;
             for (int i = 0; i < answersCount; i++)
             {
                 var cb = new CheckBox
@@ -32,27 +31,32 @@ namespace PlayTest
                     Text = question.Answers[i].Text,
                     AutoSize = true,
                     Left = 20,
-                    Top = lastTop,
+                    Top = currentTop,
                     Name = "cb" + i
                 };
-                lastTop += cb.Height;
+                //cb.Paint += cb_Paint;
+                currentTop += cb.Height;
                 this.Controls.Add(cb);
                 if (i == answersCount - 1)
                     this.Height = cb.Top + cb.Height + margin;
             }
         }
 
-        public override bool IsAnswerCorrect
+        void cb_Paint(object sender, PaintEventArgs e)
         {
-            get
+            var pen = new Pen(Color.Blue);
+            var rectangle = new Rectangle(0, 0, e.ClipRectangle.Width - 1, e.ClipRectangle.Height - 1);
+            e.Graphics.DrawRectangle(pen, rectangle);
+        }
+
+        public override bool IsAnswerCorrect()
+        {
+            for (int i = 0; i < question.Answers.Count; i++)
             {
-                for (int i = 0; i < question.Answers.Count; i++)
-                {
-                    if ((this.Controls["cb" + i] as CheckBox).Checked != question.Answers[i].IsTrue)
-                        return false;
-                }
-                return true;
+                if ((this.Controls["cb" + i] as CheckBox).Checked != question.Answers[i].IsTrue)
+                    return false;
             }
+            return true;
         }
     }
 }

@@ -12,14 +12,14 @@ namespace PlayTest
 {
     public partial class ucOneAnswerTest : TestUserControl
     {
-        private Question question;
+        private OneAnswerQuestion question;
 
-        public ucOneAnswerTest(Question question)
+        public ucOneAnswerTest(OneAnswerQuestion question)
         {
             InitializeComponent();
 
             this.question = question;
-            lbQuestion.Text = question.QuestionText;
+            lbQuestion.Text = question.Text;
             lbQuestion.Left = (this.Width - lbQuestion.Width) / 2;
             int answersCount = question.Answers.Count;
             int margin = 20;
@@ -29,12 +29,13 @@ namespace PlayTest
             {
                 var rb = new RadioButton
                 {
-                    Text = question.Answers[i].Text,
+                    Text = question.Answers[i],
                     AutoSize = true,
                     Left = 20,
                     Top = lastTop,
                     Name = "rb" + i
                 };
+                rb.Paint += rb_Paint;
                 lastTop += rb.Height;
                 this.Controls.Add(rb);
                 if (i == answersCount - 1)
@@ -42,17 +43,18 @@ namespace PlayTest
             }
         }
 
-        public override bool IsAnswerCorrect
+        void rb_Paint(object sender, PaintEventArgs e)
         {
-            get
-            {
-                for (int i = 0; i < question.Answers.Count; i++)
-                {
-                    if ((this.Controls["rb" + i] as RadioButton).Checked != question.Answers[i].IsTrue)
-                        return false;
-                }
-                return true;
-            }
+            //var pen = new Pen(Color.Blue);
+            //var rectangle = new Rectangle(0, 0, e.ClipRectangle.Width - 1, e.ClipRectangle.Height - 1);
+            //e.Graphics.DrawRectangle(pen, rectangle);
+        }
+
+        public override bool IsAnswerCorrect()
+        {
+            var index = question.CorrectAnswerIndex;
+            var rb = this.Controls["rb" + index] as RadioButton;
+            return rb.Checked;
         }
     }
 }

@@ -17,144 +17,82 @@ namespace CreateTest
         public CreateTestForm()
         {
             InitializeComponent();
+            this.MaximumSize = new Size(700, 400);
         }
 
         private List<Question> questions = new List<Question>();
-        private int? current = null;
 
-        private void QuestionsTreeAddItem()
+        private void SaveToFile(string path)
         {
-            questionsTree.Nodes[0].Nodes.Add(string.Format("Вопрос {0}", questions.Count));
-            questionsTree.Nodes[0].Expand();
-        }
-
-        private void QuestionTreeDeleteItem()
-        {
-            questionsTree.Nodes[0].LastNode.Remove();
-        }
-
-        private void btnAddQuestion_Click(object sender, EventArgs e)
-        {
-            questions.Add(new Question());
-            QuestionsTreeAddItem();
-        }
-
-        private void RebindControls()
-        {
-            tbQuestion.DataBindings.Clear();
-            tbQuestion.Clear();
-
-            dgvAnswers.DataSource = null;
-
-            tbCorrectAnswer.DataBindings.Clear();
-            tbCorrectAnswer.Clear();
-
-            if (questions.Count == 0 || current == null)
-                return;
-            int index = current.Value;
-            var binding = new Binding("Text", questions[index], "QuestionText");
-            tbQuestion.DataBindings.Add(binding);
-
-            var type = questions[index].Type;
-            rbOneAnswer.Checked = type == QuestionType.OneAnswer;
-            rbMultipleAnswer.Checked = type == QuestionType.MultipleAnswer;
-            rbCustomAnswer.Checked = type == QuestionType.CustomAnswer;
-            
-            if (type == QuestionType.CustomAnswer)
+            var serializer = new XmlSerializer(typeof(List<Question>));
+            using (var stream = File.Open(path, FileMode.Create, FileAccess.Write))
             {
-                lbCorrectAnswer.Visible = true;
-                tbCorrectAnswer.Visible = true;
-                tbCorrectAnswer.DataBindings.Add("Text", questions[index], "CorrectAnswer");
-            }
-            else
-            {
-                var bs = new BindingSource();
-                bs.DataSource = questions[index].Answers;
-                dgvAnswers.DataSource = bs;
-                dgvAnswers.Update();
+                serializer.Serialize(stream, questions);
             }
         }
 
-        private void btnDeleteQuestion_Click(object sender, EventArgs e)
+        private void OneAnswerTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (current == null)
-                return;
-            questions.RemoveAt(current.Value);
-            QuestionTreeDeleteItem();
-            RebindControls();
+            lbQuestions.Enabled = true;
+            questions.Add(new OneAnswerQuestion());
+            lbQuestions.Items.Add("Вопрос " + questions.Count);
         }
 
-        private void questionsTree_AfterSelect(object sender, TreeViewEventArgs e)
+        private void lbQuestions_SelectedIndexChanged(object sender, EventArgs e)
         {
-            current = questionsTree.SelectedNode.Index;
-            if (questionsTree.SelectedNode == questionsTree.Nodes[0])
-                current = null;
-            RebindControls();
+            panel.Controls.Clear();
+            if (questions.Count == 0)
+                return;
+            int current = lbQuestions.SelectedIndex;
+            if (current == -1)
+                return;
+            var testControl = TestControlFactory.Create(questions[current]);
+            panel.Controls.Add(testControl);
         }
 
-        private void rbQuestionType_CheckedChanged(object sender, EventArgs e)
+        private void SaveTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (current == null)
-                return;
-            int index = current.Value;
-            lbCorrectAnswer.Visible = tbCorrectAnswer.Visible = false;
-            if (rbOneAnswer.Checked)
-                questions[index].Type = QuestionType.OneAnswer;
-            if (rbMultipleAnswer.Checked)
-                questions[index].Type = QuestionType.MultipleAnswer;
-            if (rbCustomAnswer.Checked)
-            {
-                questions[index].Type = QuestionType.CustomAnswer;
-                questions[index].Answers.Clear();
-                lbCorrectAnswer.Visible = true;
-                tbCorrectAnswer.Visible = true;
-                this.Width = 436;
-            }
-            else this.Width = 813;
+            var saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "XML files(*.xml)|*.xml";
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                SaveToFile(saveFileDialog.FileName);
         }
 
-        private void btnAddAnswer_Click(object sender, EventArgs e)
+        private void MultipleAnswerTestToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (current == null)
-                return;
-            int index = current.Value;
-            //new AddAnswerForm(questions[index].Answers).ShowDialog(this);
-            questions[index].Answers.Add(new Answer
-            {
-                Text = "Введите вариант ответа",
-                IsTrue = false
-            });
-            RebindControls();
+            lbQuestions.Enabled = true;
+            questions.Add(new MultipleAnswerQuestion());
+            lbQuestions.Items.Add("Вопрос " + questions.Count);
+        }
+
+        private void CustomAnswerTestToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            lbQuestions.Enabled = true;
+            questions.Add(new CustomAnswerQuestion());
+            lbQuestions.Items.Add("Вопрос " + questions.Count);
         }
 
         private void CreateTestForm_Load(object sender, EventArgs e)
         {
-            var tooltip = new ToolTip();
-            tooltip.SetToolTip(btnAddQuestion, "Добавить вопрос");
-            tooltip.SetToolTip(btnDeleteQuestion, "Удалить вопрос");
-
-            tooltip.SetToolTip(btnAddAnswer, "Добавить");
-            tooltip.SetToolTip(btnDeleteAnswer, "Удалить");
-            RebindControls();
+            CreateTestForm_Resize(sender, e);
+            lbQuestions.Enabled = false;
         }
 
-        private void btnDeleteAnswer_Click(object sender, EventArgs e)
+        private void CreateTestForm_Resize(object sender, EventArgs e)
         {
-            if (current == null)
+            lbQuestions.ClientSize = new Size(lbQuestions.ClientSize.Width, this.ClientSize.Height);
+        }
+
+        private void RemoveQuestionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (questions.Count == 0)
                 return;
-            int index = current.Value;
-            int currentRow = dgvAnswers.CurrentCell.RowIndex;
-            questions[index].Answers.RemoveAt(currentRow);
-            RebindControls();
-        }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            var serializer = new XmlSerializer(typeof(List<Question>));
-            using (var stream = new StreamWriter("test.xml"))
-            {
-                serializer.Serialize(stream, questions);
-            }
+            int current = lbQuestions.SelectedIndex;
+            questions.RemoveAt(current);
+            lbQuestions.Items.RemoveAt(questions.Count);
+            if (questions.Count == 0)
+                lbQuestions.Enabled = false;
+            lbQuestions_SelectedIndexChanged(null, null);
         }
     }
 }
