@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PlayTest</RootNamespace>
     <AssemblyName>PlayTest</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -43,9 +45,12 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="TestCore">
+      <HintPath>..\TestCore\bin\Release\TestCore.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TestUserControl.cs">
+    <Compile Include="Controls\TestUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="MainForm.cs">
@@ -56,24 +61,24 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Question.cs" />
+    <Compile Include="Test.cs" />
     <Compile Include="TestControlFactory.cs" />
-    <Compile Include="ucCustomAnswerTest.cs">
+    <Compile Include="Controls\ucCustomAnswerTest.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ucCustomAnswerTest.Designer.cs">
+    <Compile Include="Controls\ucCustomAnswerTest.Designer.cs">
       <DependentUpon>ucCustomAnswerTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="ucMultipleAnswerTest.cs">
+    <Compile Include="Controls\ucMultipleAnswerTest.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ucMultipleAnswerTest.Designer.cs">
+    <Compile Include="Controls\ucMultipleAnswerTest.Designer.cs">
       <DependentUpon>ucMultipleAnswerTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="ucOneAnswerTest.cs">
+    <Compile Include="Controls\ucOneAnswerTest.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ucOneAnswerTest.Designer.cs">
+    <Compile Include="Controls\ucOneAnswerTest.Designer.cs">
       <DependentUpon>ucOneAnswerTest.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="MainForm.resx">
@@ -89,13 +94,13 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="ucCustomAnswerTest.resx">
+    <EmbeddedResource Include="Controls\ucCustomAnswerTest.resx">
       <DependentUpon>ucCustomAnswerTest.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ucMultipleAnswerTest.resx">
+    <EmbeddedResource Include="Controls\ucMultipleAnswerTest.resx">
       <DependentUpon>ucMultipleAnswerTest.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ucOneAnswerTest.resx">
+    <EmbeddedResource Include="Controls\ucOneAnswerTest.resx">
       <DependentUpon>ucOneAnswerTest.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
